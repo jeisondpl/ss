@@ -1,0 +1,26 @@
+version: "3.8"
+   
+services:
+  tortugas_backend:
+    build: ./backtortugas
+    environment: 
+      TZ: America/Bogota
+    command: gunicorn BackTortugas.wsgi --bind 0.0.0.0:8100 --workers 5 
+    # command: python manage.py runserver 0.0.0.0:3003 
+    ports:
+      - 8100
+      
+  tortugas_frontend:
+    build: ./tortugas-front-end
+    depends_on:
+      - tortugas_backend
+    environment: 
+      TZ: America/Bogota
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:   
+      - ./tortugas-front-end:/frontend
+      # - ./tortugas-front-end/build:/usr/share/nginx/html
+networks:
+  default:
+    external:
+      name: proxy_default
